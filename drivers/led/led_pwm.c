@@ -52,7 +52,7 @@ static int led_pwm_disable(struct udevice *dev)
 	if (ret)
 		return ret;
 
-	ret = pwm_set_enable(priv->pwm, priv->channel, false);
+	ret = pwm_set_enable(priv->pwm, priv->channel, priv->active_low);
 	if (ret)
 		return ret;
 
