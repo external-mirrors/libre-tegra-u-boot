@@ -33,23 +33,20 @@
 	};
 
 	host1x@50000000 {
-		dc@54200000 {
-			clocks = <&tegra_car TEGRA30_CLK_DISP1>,
-				 <&tegra_car TEGRA30_CLK_PLL_D_OUT0>;
-
-			rgb {
-				status = "okay";
-
-				nvidia,panel = <&dsia>;
-			};
-		};
-
 		dsia: dsi@54300000 {
 			status = "okay";
 
 			avdd-dsi-csi-supply = <&avdd_dsi_csi>;
 
-			panel = <&panel>;
+			panel@0 {
+				compatible = "hydis,hv101hd1";
+				reg = <0>;
+
+				vdd-supply = <&vdd_panel>;
+				vio-supply = <&vio_panel>;
+
+				backlight = <&backlight>;
+			};
 		};
 	};
 
@@ -1006,17 +1003,18 @@
 			gpio-controller;
 
 			regulators {
-				vdd_1v2_bl: vdd1 {
-					regulator-name = "vdd_1v2_backlight";
+				vio_panel: vdd1 {
+					regulator-name = "vddio_ddr_1v2";
 					regulator-min-microvolt = <1200000>;
 					regulator-max-microvolt = <1200000>;
 					regulator-boot-on;
 				};
 
-				vcore_lcd: vdd2 {
-					regulator-name = "vcore_lcd";
-					regulator-min-microvolt = <1500000>;
-					regulator-max-microvolt = <1500000>;
+				vdd2 {
+					regulator-name = "vddio_ddr";
+					regulator-min-microvolt = <1200000>;
+					regulator-max-microvolt = <1200000>;
+					regulator-always-on;
 					regulator-boot-on;
 				};
 
@@ -1111,7 +1109,7 @@
 		compatible = "pwm-backlight";
 
 		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
-		power-supply = <&vdd_1v2_bl>;
+		power-supply = <&vdd_5v0_sys>;
 		pwms = <&pwm 0 71428>;
 
 		brightness-levels = <1 35 70 105 140 175 210 255>;
@@ -1158,13 +1156,13 @@
 		};
 	};
 
-	panel: panel {
-		compatible = "hydis,hv101hd1";
-
-		vdd-supply = <&vcore_lcd>;
-		enable-gpios = <&gpio TEGRA_GPIO(L, 4) GPIO_ACTIVE_HIGH>;
-
-		backlight = <&backlight>;
+	vdd_5v0_sys: regulator-5v {
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_5v0_sys";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		regulator-always-on;
+		regulator-boot-on;
 	};
 
 	vdd_usd: regulator-usd {
@@ -1172,5 +1170,15 @@
 		regulator-name = "vdd_usd";
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
+	};
+
+	vdd_panel: regulator-panel {
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_panel";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		gpio = <&gpio TEGRA_GPIO(L, 4) GPIO_ACTIVE_HIGH>;
+		enable-active-high;
 	};
 };
