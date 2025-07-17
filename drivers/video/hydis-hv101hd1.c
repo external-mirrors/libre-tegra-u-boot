@@ -5,6 +5,8 @@
  * Copyright (c) 2023 Svyatoslav Ryhel <clamor95@gmail.com>
  */
 
+#define LOG_DEBUG
+
 #include <backlight.h>
 #include <dm.h>
 #include <panel.h>
