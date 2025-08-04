@@ -11,6 +11,7 @@
 	aliases {
 		i2c0 = &pwr_i2c;
 		i2c1 = &gen2_i2c;
+		i2c2 = &cam_i2c;
 
 		mmc0 = &sdmmc4;	/* eMMC */
 
@@ -926,6 +927,11 @@
 			usif-gpios = <&gpio TEGRA_GPIO(Y, 3) GPIO_ACTIVE_HIGH>;
 			dp2t-gpios = <&gpio TEGRA_GPIO(CC, 2) GPIO_ACTIVE_HIGH>;
 		};
+	};
+
+	cam_i2c: i2c@7000c500 {
+		status = "okay";
+		clock-frequency = <100000>;
 	};
 
 	pwr_i2c: i2c@7000d000 {
