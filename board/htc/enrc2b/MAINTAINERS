@@ -1,0 +1,7 @@
+ENRC2B BOARD
+M:	Svyatoslav Ryhel <clamor95@gmail.com>
+S:	Maintained
+F:	board/htc/enrc2b/
+F:	configs/enrc2b_defconfig
+F:	doc/board/htc/enrc2b.rst
+F:	include/configs/enrc2b.h
