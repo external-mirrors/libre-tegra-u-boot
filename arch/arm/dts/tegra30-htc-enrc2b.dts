@@ -30,7 +30,6 @@
 		reg = <0x80000000 0x40000000>;
 	};
 
-	/*
 	host1x@50000000 {
 		dc@54200000 {
 			backlight: backlight {
@@ -52,14 +51,13 @@
 
 				reset-gpios = <&gpio TEGRA_GPIO(N, 6) GPIO_ACTIVE_LOW>;
 
-				vdd-supply = <&vdd_3v3_panel>;
+				vdd-supply = <&vdd_3v0_panel>;
 				vddio-supply = <&vdd_1v8_panel>;
 
 				backlight = <&backlight>;
 			};
 		};
 	};
-	*/
 
 	bsev@6001b000 {
 		status = "okay";
@@ -70,7 +68,6 @@
 		pinctrl-0 = <&state_default>;
 
 		state_default: pinmux {
-			
 			/* PORT A */
 			clk_32k_out {
 				nvidia,pins = "clk_32k_out_pa0";
@@ -1276,7 +1273,6 @@
 					regulator-boot-on;
 				};
 
-#if 0
 				/* DSI VDD */
 				avdd_dsi_csi: ldo4 {
 					regulator-name = "avdd_dsi_csi";
@@ -1284,7 +1280,6 @@
 					regulator-max-microvolt = <1200000>;
 					regulator-boot-on;
 				};
-#endif
 			};
 		};
 	};
@@ -1294,7 +1289,6 @@
 		bus-width = <8>;
 		non-removable;
 
-		//vmmc-supply = <&vcore_emmc>;
 		vqmmc-supply = <&vdd_1v8_vio>;
 	};
 
@@ -1340,7 +1334,6 @@
 		};
 	};
 
-	/*
 	vdd_3v0_panel: regulator-lcm {
 		compatible = "regulator-fixed";
 		regulator-name = "v_lcm_3v0";
@@ -1358,5 +1351,4 @@
 		gpio = <&gpio TEGRA_GPIO(E, 5) GPIO_ACTIVE_HIGH>;
 		enable-active-high;
 	};
-	*/
 };

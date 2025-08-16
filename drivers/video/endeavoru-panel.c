@@ -79,7 +79,7 @@ static int endeavoru_panel_enable_backlight(struct udevice *dev)
 
 	mipi_dsi_dcs_exit_sleep_mode(dsi);
 
-	mdelay(105);
+	mdelay(125);
 
 	dcs_write_one(dsi, 0x35, 0x00);
 
@@ -165,7 +165,7 @@ static int endeavoru_panel_of_to_plat(struct udevice *dev)
 	ret = gpio_request_by_name(dev, "reset-gpios", 0,
 				   &priv->reset_gpio, GPIOD_IS_OUT);
 	if (ret) {
-		log_err("could not decode reser-gpios (%d)\n", ret);
+		log_err("could not decode reset-gpios (%d)\n", ret);
 		return ret;
 	}
 
