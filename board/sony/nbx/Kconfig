@@ -1,0 +1,13 @@
+if TARGET_SONY_NBX
+
+config SYS_BOARD
+	default "nbx"
+
+config SYS_VENDOR
+	default "sony"
+
+config TEGRA_BOARD_STRING
+	string "Default Tegra board name"
+	default "Sony Tablet P"
+
+endif

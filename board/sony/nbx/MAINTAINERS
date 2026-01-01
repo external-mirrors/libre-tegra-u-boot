@@ -1,0 +1,5 @@
+NBX02 BOARD
+M:	Svyatoslav Ryhel <clamor95@gmail.com>
+S:	Maintained
+F:	board/sony/nbx
+F:	configs/nbx02_defconfig

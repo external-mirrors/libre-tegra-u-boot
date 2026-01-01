@@ -44,6 +44,10 @@ config TARGET_PICASSO
 	bool "Acer Tegra20 Picasso board"
 	select BOARD_LATE_INIT
 
+config TARGET_SONY_NBX
+	bool "Sony nbx Tegra20 board"
+	select BOARD_LATE_INIT
+
 config TARGET_PLUTUX
 	bool "Avionic Design Plutux board"
 	select BOARD_LATE_INIT
@@ -94,6 +98,7 @@ source "board/avionic-design/medcom-wide/Kconfig"
 source "board/motorola/mot/Kconfig"
 source "board/compal/paz00/Kconfig"
 source "board/acer/picasso/Kconfig"
+source "board/sony/nbx/Kconfig"
 source "board/avionic-design/plutux/Kconfig"
 source "board/nvidia/seaboard/Kconfig"
 source "board/samsung/n1/Kconfig"
