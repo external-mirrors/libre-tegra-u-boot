@@ -719,6 +719,16 @@ config VIDEO_LCD_SONY_L4F00430T01
 	  WVGA resolution (480x800) and is setup over SPI, video
 	  data comes from RGB.
 
+config VIDEO_LCD_SONY_TABLET_P_PANEL
+	bool "Sony Tablet P DSI LCD panel support"
+	depends on PANEL && BACKLIGHT && DM_I2C
+	select VIDEO_MIPI_DSI
+	help
+	  Say Y here if you want to enable support for double LCD panel
+	  configuration found in the Sony Tablet P. The panel has a
+	  1024x960 resolution totally and is setup over I2C, video
+	  data comes from RGB.
+
 config VIDEO_LCD_SAMSUNG_S6E63M0
 	tristate "Samsung S6E63M0 controller based panel support"
 	depends on PANEL && BACKLIGHT
