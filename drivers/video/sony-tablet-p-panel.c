@@ -41,6 +41,19 @@ static struct display_timing sony_tablet_p_timing = {
 	.flags			= DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW,
 };
 
+static void sony_tablet_p_write(struct udevice *dev, u8 *buf, u16 len)
+{
+	struct dm_i2c_chip *chip = dev_get_parent_plat(dev);
+	struct i2c_msg i2c_msg;
+
+	i2c_msg.addr	= chip->chip_addr;
+	i2c_msg.flags	= 0;
+	i2c_msg.len	= len;
+	i2c_msg.buf	= buf;
+
+	dm_i2c_xfer(dev, &i2c_msg, 1);
+}
+
 static int sony_tablet_p_enable_backlight(struct udevice *dev)
 {
 	struct sony_tablet_p_priv *priv = dev_get_priv(dev);
@@ -49,7 +62,7 @@ static int sony_tablet_p_enable_backlight(struct udevice *dev)
 		return 0;
 
 	struct sony_tablet_p_priv *link_priv = dev_get_priv(priv->panel_link);
-	u8 buff[4] = { 0x10, 0x14, 0x53, 0xe3 };
+	u8 values[5];
 	int ret;
 
 	ret = dm_gpio_set_value(&priv->reset_gpio, 0);
@@ -80,6 +93,52 @@ static int sony_tablet_p_enable_backlight(struct udevice *dev)
 
 	// panel resume
 
+	values[0] = 0xB0;
+	values[1] = 0x04;
+	sony_tablet_p_write(dev, values, 2);
+	sony_tablet_p_write(priv->panel_link, values, 2);
+
+	values[0] = 0xD1;
+	values[1] = 0x10;
+	values[2] = 0x14;
+	values[3] = 0x53;
+	values[4] = 0xE3;
+	sony_tablet_p_write(dev, values, 5);
+	sony_tablet_p_write(priv->panel_link, values, 5);
+
+	values[0] = 0xB0;
+	values[1] = 0x03;
+	sony_tablet_p_write(dev, values, 2);
+	sony_tablet_p_write(priv->panel_link, values, 2);
+
+	values[0] = 0x36;
+	values[1] = 0x00;
+	sony_tablet_p_write(dev, values, 2);
+	sony_tablet_p_write(priv->panel_link, values, 2);
+
+	values[0] = 0x3a;
+	values[1] = 0x60;
+	sony_tablet_p_write(dev, values, 2);
+	sony_tablet_p_write(priv->panel_link, values, 2);
+
+	values[0] = 0xc6;
+	values[1] = 0x11;
+	sony_tablet_p_write(dev, values, 2);
+
+	values[0] = 0xc6;
+	values[1] = 0x21;
+	sony_tablet_p_write(priv->panel_link, values, 2);
+
+	//pr_info("%s\n", __FUNCTION__);
+	values[0] = 0x29;
+	sony_tablet_p_write(dev, values, 1);
+	sony_tablet_p_write(priv->panel_link, values, 1);
+
+	values[0] = 0x11;
+	sony_tablet_p_write(dev, values, 1);
+	sony_tablet_p_write(priv->panel_link, values, 1);
+
+#if 0
 	dm_i2c_reg_write(dev, 0xb0, 0x04);
 	dm_i2c_reg_write(priv->panel_link, 0xb0, 0x04);
 
@@ -103,6 +162,7 @@ static int sony_tablet_p_enable_backlight(struct udevice *dev)
 
 	dm_i2c_reg_write(dev, MIPI_DCS_EXIT_SLEEP_MODE, 0x00);
 	dm_i2c_reg_write(priv->panel_link, MIPI_DCS_EXIT_SLEEP_MODE, 0x00);
+#endif
 
 	return 0;
 }
