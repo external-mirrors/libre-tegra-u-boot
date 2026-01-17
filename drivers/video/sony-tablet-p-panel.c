@@ -5,6 +5,9 @@
  * Copyright (c) 2025 Svyatoslav Ryhel <clamor95@gmail.com>
  */
 
+ #define LOG_DEBUG 1
+ #define DEBUG 1
+
 #include <backlight.h>
 #include <dm.h>
 #include <i2c.h>
@@ -14,8 +17,7 @@
 #include <linux/delay.h>
 #include <power/regulator.h>
 #include <asm/gpio.h>
-
-#define DEBUG
+#include <stdio.h>
 
 struct sony_tablet_p_priv {
 	struct udevice *panel_link;
@@ -56,6 +58,7 @@ static void sony_tablet_p_write(struct udevice *dev, u8 *buf, u16 len)
 
 static int sony_tablet_p_enable_backlight(struct udevice *dev)
 {
+	printf("%s\n", __func__);
 	struct sony_tablet_p_priv *priv = dev_get_priv(dev);
 
 	if (!priv->panel_link)
@@ -64,6 +67,22 @@ static int sony_tablet_p_enable_backlight(struct udevice *dev)
 	struct sony_tablet_p_priv *link_priv = dev_get_priv(priv->panel_link);
 	u8 values[5];
 	int ret;
+
+	/*
+	ret = dm_gpio_set_value(&priv->reset_gpio, 1);
+	if (ret) {
+		log_debug("reset-gpio link0 disable failed (%d)\n", ret);
+		return ret;
+	}
+
+	ret = dm_gpio_set_value(&link_priv->reset_gpio, 1);
+	if (ret) {
+		log_debug("reset-gpio link1 disable failed (%d)\n", ret);
+		return ret;
+	}
+
+	mdelay(10);
+	*/
 
 	ret = dm_gpio_set_value(&priv->reset_gpio, 0);
 	if (ret) {
@@ -169,6 +188,7 @@ static int sony_tablet_p_enable_backlight(struct udevice *dev)
 
 static int sony_tablet_p_set_backlight(struct udevice *dev, int percent)
 {
+	printf("%s\n", __func__);
 	struct sony_tablet_p_priv *priv = dev_get_priv(dev);
 	int ret;
 
@@ -182,7 +202,7 @@ static int sony_tablet_p_set_backlight(struct udevice *dev, int percent)
 
 	if (priv->panel_link)
 		return sony_tablet_p_set_backlight(priv->panel_link, percent);
-	
+
 	return 0;
 }
 
@@ -195,6 +215,7 @@ static int sony_tablet_p_timings(struct udevice *dev, struct display_timing *tim
 
 static int sony_tablet_p_of_to_plat(struct udevice *dev)
 {
+	printf("%s\n", __func__);
 	struct sony_tablet_p_priv *priv = dev_get_priv(dev);
 	int ret;
 
@@ -252,6 +273,7 @@ static int sony_tablet_p_of_to_plat(struct udevice *dev)
 
 static int sony_tablet_p_hw_init(struct udevice *dev)
 {
+	printf("%s\n", __func__);
 	struct sony_tablet_p_priv *priv = dev_get_priv(dev);
 	int ret;
 
@@ -276,6 +298,7 @@ static int sony_tablet_p_hw_init(struct udevice *dev)
 
 static int sony_tablet_p_probe(struct udevice *dev)
 {
+	printf("%s\n", __func__);
 	struct mipi_dsi_panel_plat *plat = dev_get_plat(dev);
 
 	/* fill characteristics of DSI data link */
