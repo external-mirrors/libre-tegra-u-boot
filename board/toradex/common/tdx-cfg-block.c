@@ -88,7 +88,7 @@ const struct toradex_som toradex_modules[] = {
 	{ COLIBRI_T20_256MB,                     "Colibri T20 256MB",                    TARGET_IS_ENABLED(COLIBRI_T20)     },
 	{ COLIBRI_T20_512MB,                     "Colibri T20 512MB",                    TARGET_IS_ENABLED(COLIBRI_T20)     },
 	{ COLIBRI_T20_512MB_IT,                  "Colibri T20 512MB IT",                 TARGET_IS_ENABLED(COLIBRI_T20)     },
-	{ COLIBRI_T30,                           "Colibri T30 1GB",                      TARGET_IS_ENABLED(COLIBRI_T30)     },
+	{ COLIBRI_T30,                           "Colibri T30 1GB",                      TARGET_IS_ENABLED(COLIBRI_T30) | TARGET_IS_ENABLED(MYTOUCH_BOX)    },
 	{ COLIBRI_T20_256MB_IT,                  "Colibri T20 256MB IT",                 TARGET_IS_ENABLED(COLIBRI_T20)     },
 	{ APALIS_T30_2GB,                        "Apalis T30 2GB",                       TARGET_IS_ENABLED(APALIS_T30)      },
 	{ APALIS_T30_1GB,                        "Apalis T30 1GB",                       TARGET_IS_ENABLED(APALIS_T30)      },
