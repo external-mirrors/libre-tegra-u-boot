@@ -16,9 +16,9 @@
 #include <i2c.h>
 #include <linux/delay.h>
 #include "pinmux-config-box.h"
-#include "../../toradex/common/tdx-common.h"
+#include "../common/tdx-common.h"
 
-int arch_misc_init(void)
+int misc_init_r(void)
 {
 	if (readl(NV_PA_BASE_SRAM + NVBOOTINFOTABLE_BOOTTYPE) ==
 	    NVBOOTTYPE_RECOVERY)
@@ -56,7 +56,7 @@ int ft_board_setup(void *blob, struct bd_info *bd)
  * Routine: pinmux_init
  * Description: Do individual peripheral pinmux configs
  */
-#if 1
+#if 1 // why?
 void pinmux_init(void)
 {
 	pinmux_config_pingrp_table(tegra3_pinmux_common,
