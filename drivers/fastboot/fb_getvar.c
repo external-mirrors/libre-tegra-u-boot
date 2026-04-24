@@ -29,6 +29,12 @@ static void getvar_partition_type(char *part_name, char *response);
 static void getvar_partition_size(char *part_name, char *response);
 static void getvar_is_userspace(char *var_parameter, char *response);
 
+__weak int board_fastboot_get_part_info(const char *part_name, char *response,
+					size_t *size)
+{
+	return 1;
+}
+
 static const struct {
 	const char *variable;
 	bool list;
@@ -115,6 +121,12 @@ static int getvar_get_part_info(const char *part_name, char *response,
 	struct blk_desc *dev_desc;
 	struct disk_partition disk_part;
 	struct part_info *part_info;
+
+	if (IS_ENABLED(CONFIG_FASTBOOT_FLASH)) {
+		r = board_fastboot_get_part_info(part_name, response, size);
+		if (r != 1)
+			return r;
+	}
 
 	if (IS_ENABLED(CONFIG_FASTBOOT_FLASH_BLOCK)) {
 		r = fastboot_block_get_part_info(part_name, &dev_desc, &disk_part,

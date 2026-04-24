@@ -17,6 +17,17 @@
 #include <vsprintf.h>
 #include <linux/printk.h>
 
+__weak int board_fastboot_flash(char *cmd_parameter, void *download_buffer,
+				u32 download_bytes, char *response)
+{
+	return 0;
+}
+
+__weak int board_fastboot_erase(char *cmd_parameter, char *response)
+{
+	return 0;
+}
+
 /**
  * image_size - final fastboot image size
  */
@@ -339,6 +350,11 @@ void fastboot_data_complete(char *response)
  */
 static void __maybe_unused flash(char *cmd_parameter, char *response)
 {
+	if (IS_ENABLED(CONFIG_FASTBOOT_FLASH) &&
+	    board_fastboot_flash(cmd_parameter, fastboot_buf_addr,
+				 image_size, response))
+		return;
+
 	if (IS_ENABLED(CONFIG_FASTBOOT_FLASH_BLOCK))
 		fastboot_block_flash_write(cmd_parameter, fastboot_buf_addr,
 					   image_size, response);
@@ -367,6 +383,10 @@ static void __maybe_unused flash(char *cmd_parameter, char *response)
  */
 static void __maybe_unused erase(char *cmd_parameter, char *response)
 {
+	if (IS_ENABLED(CONFIG_FASTBOOT_FLASH) &&
+	    board_fastboot_erase(cmd_parameter, response))
+		return;
+
 	if (IS_ENABLED(CONFIG_FASTBOOT_FLASH_BLOCK))
 		fastboot_block_erase(cmd_parameter, response);
 
