@@ -1,31 +1,13 @@
 /* SPDX-License-Identifier: GPL-2.0+ */
 
-#ifndef _BCT_H_
-#define _BCT_H_
+#ifndef _TEGRA124_BCT_H_
+#define _TEGRA124_BCT_H_
 
 /*
  * Defines the BCT parametres for T124
  */
 #define UBCT_LENGTH		0x6b0  /* bytes */
 #define SBCT_LENGTH		0x1950 /* bytes */
-
-#define BCT_HASH		0x10
-#define EBT_ALIGNMENT		0x10
-
-/*
- * Defines the CMAC-AES-128 hash length in 32 bit words. (128 bits = 4 words)
- */
-#define NVBOOT_CMAC_AES_HASH_LENGTH		4
-
-/*
- * Defines the RSA modulus length in 32 bit words used for PKC secure boot.
- */
-#define NVBOOT_SE_RSA_MODULUS_LENGTH		64
-
-/*
- * Defines the maximum number of bootloader descriptions in the BCT.
- */
-#define NVBOOT_MAX_BOOTLOADERS			4
 
 struct nv_bootloader_info {
 	u32 version;
@@ -52,4 +34,4 @@ struct nvboot_config_table {
 	u32 sbct_unused2;
 };
 
-#endif /* _BCT_H_ */
+#endif /* _TEGRA124_BCT_H_ */
