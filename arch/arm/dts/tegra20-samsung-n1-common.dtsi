@@ -25,6 +25,10 @@
 		reg = <0x00000000 0x40000000>; /* 1 GB */
 	};
 
+	bsev@6001b000 {
+		status = "okay";
+	};
+
 	pinmux@70000014 {
 		pinctrl-names = "default";
 		pinctrl-0 = <&state_default>;
