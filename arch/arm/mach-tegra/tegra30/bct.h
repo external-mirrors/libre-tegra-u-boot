@@ -24,9 +24,27 @@ struct nvboot_config_table {
 	u32 crypto_hash[NVBOOT_CMAC_AES_HASH_LENGTH];
 	u32 unused0[4];
 	u32 boot_data_version;
-	u32 unused1[972];
+	u32 block_size_log2;
+	u32 page_size_log2;
+	u32 partition_size;
+	u32 unused1[968];
+	u32 bootloader_used;
 	struct nv_bootloader_info bootloader[NVBOOT_MAX_BOOTLOADERS];
 	u32 unused2[508];
+};
+
+struct tegra_boot_info_table {
+	u8 unused1[12];
+	u32 boot_type;
+	u32 primary_device;
+	u32 secondary_device;
+	u8 unused2[9];
+	u8 bct_valid;
+	u8 unused3[13];
+	u32 bct_block;
+	u32 bct_page;
+	u32 bct_size;
+	u32 bct_ptr;
 };
 
 #endif /* _TEGRA30_BCT_H_ */

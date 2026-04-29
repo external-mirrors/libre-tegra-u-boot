@@ -278,4 +278,15 @@ config CMD_EBTUPDATE
 	  impossible on production devices. To make it easier procedure of
 	  re-cryption was created. If your device was re-crypted choose Y.
 
+config TEGRA_FASTBOOT_FLASH
+	bool "Enable 'fastboot flash' board hook for bootloader flashing"
+	depends on TEGRA20 || TEGRA30 || TEGRA124
+	depends on FASTBOOT_FLASH
+	select TEGRA_BCT
+	help
+	  Allow flashing bootloader automatically by only providing a single
+	  bootloader image via fastboot flash, the code takes care of
+	  patching BCT and flashing both BCT and encrypted bootloader
+	  back into boot storage if applicable.
+
 endif
