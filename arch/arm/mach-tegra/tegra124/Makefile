@@ -6,7 +6,6 @@
 #
 
 obj-$(CONFIG_XPL_BUILD) += cpu.o
-obj-$(CONFIG_$(XPL_)CMD_EBTUPDATE) += bct.o
 
 obj-y	+= clock.o
 obj-y	+= pmc.o

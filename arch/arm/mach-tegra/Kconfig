@@ -21,6 +21,11 @@ config TEGRA_CRYPTO
 	select AES
 	select TEGRA_AES
 
+config TEGRA_BCT
+	bool "Tegra BCT operations"
+	depends on TEGRA20 || TEGRA30 || TEGRA124
+	select TEGRA_CRYPTO
+
 config TEGRA_GP_PADCTRL
 	bool
 
@@ -267,7 +272,7 @@ config CMD_ENTERRCM
 config CMD_EBTUPDATE
 	bool "Enable 'ebtupdate' command"
 	depends on TEGRA20 || TEGRA30 || TEGRA124
-	select TEGRA_CRYPTO
+	select TEGRA_BCT
 	help
 	  Updating u-boot from within u-boot in rather complex or even
 	  impossible on production devices. To make it easier procedure of
