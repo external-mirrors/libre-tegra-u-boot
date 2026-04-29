@@ -3,7 +3,26 @@
 #ifndef _BCT_H_
 #define _BCT_H_
 
-#define EBT_ALIGNMENT		0x10
+#define EBT_MAX_LENGTH		(1024 * 1024 * 2)	/* 2 MB */
+
+enum tegra_boot_device {
+	TEGRA_BOOT_DEVICE_UNKNOWN = 0,
+	TEGRA_BOOT_DEVICE_MMC,
+	TEGRA_BOOT_DEVICE_SPI,
+};
+
+struct tegra_boot_update_context {
+	enum tegra_boot_device dev;
+	struct nvboot_config_table *bct;
+	char error[60];
+	u32 block_size;
+	u32 page_size;
+	u8 *ebt_ptr;
+	u32 ebt_size;
+
+	struct mmc *mmc;
+	struct spi_flash *spi_flash;
+};
 
 /*
  * Defines the CMAC-AES-128 hash length in 32 bit words. (128 bits = 4 words)
@@ -14,6 +33,16 @@
  * Defines the RSA modulus length in 32 bit words used for PKC secure boot.
  */
 #define NVBOOT_SE_RSA_MODULUS_LENGTH		64
+
+/*
+ * Defines the maximum number of device parameters in the BCT.
+ */
+#define NVBOOT_MAX_PARAM_SETS		4
+
+/*
+ * Defines the maximum number of sdram timing descriptions in the BCT.
+ */
+#define NVBOOT_MAX_SDRAM_SETS		4
 
 /*
  * Defines the maximum number of bootloader descriptions in the BCT.
@@ -30,15 +59,28 @@
 
 #define BCT_LENGTH	(UBCT_LENGTH + SBCT_LENGTH)
 
-/*
- * Updates the hash of bootloader entry and the BCT itself
- * It will encrypt BCT in place if the device requires it
+/**
+ * tegra_boot_flash_bct - Flashes the provided BCT into the boot device
+ * @ctx:	Pointer to the Tegra boot update context structure
+ * @bct_buffer  Pointer to the BCT structure
+ * @bct_size	BCT size in bytes
  *
- * @param  bct		boot config table start in RAM
- * @param  ebt		bootloader start in RAM
- * @param  ebt_size	bootloader file size in bytes
- * Return: 0, or 1 if failed
+ * Return: 0, or -1 if failed
  */
-int bct_patch(u8 *bct, u8 *ebt, u32 ebt_size);
+int tegra_boot_flash_bct(struct tegra_boot_update_context *ctx,
+			 struct nvboot_config_table *bct_buffer,
+			 u32 bct_size);
+
+/**
+ * tegra_boot_flash_bootloader - Flashes the provided bootloader into
+ *				 the boot device
+ * @ctx:	Pointer to the Tegra boot update context structure
+ * @ebt_buffer  Pointer to the buffer containing bootloader
+ * @ebt_size	Bootloader size in bytes
+ *
+ * Return: 0, or -1 if failed
+ */
+int tegra_boot_flash_bootloader(struct tegra_boot_update_context *ctx,
+				u8 *ebt_buffer, u32 ebt_size);
 
 #endif /* _BCT_H_ */

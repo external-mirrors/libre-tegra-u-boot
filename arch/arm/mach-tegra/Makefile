@@ -28,6 +28,7 @@ obj-$(CONFIG_TEGRA_IVC) += ivc.o
 ifndef CONFIG_XPL_BUILD
 obj-$(CONFIG_ARMV7_PSCI) += psci.o
 obj-$(CONFIG_TEGRA_BCT) += bct.o
+obj-$(CONFIG_TEGRA_FASTBOOT_FLASH) += fastboot.o
 endif
 obj-$(CONFIG_DISPLAY_CPUINFO) += sys_info.o
 obj-y += pmc.o
