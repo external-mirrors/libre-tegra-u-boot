@@ -83,12 +83,6 @@ static int get_project_id(void)
 	log_debug("[TRANSFORMER]: project id %d (%s)\n", proj_id,
 		  project_id_to_fdt[proj_id]);
 
-	/* Mark tablet with SPI flash */
-	if (proj_id == TF600T)
-		env_set_hex("spiflash", true);
-	else
-		env_set_hex("spiflash", false);
-
 	return proj_id & 0xf;
 }
 
