@@ -1,9 +1,9 @@
 .. SPDX-License-Identifier: GPL-2.0+:
 
 .. index::
-   single: ebtupdate (command)
+   single: bctupdate (command)
 
-ebtupdate command
+bctupdate command
 =================
 
 Synopsis
@@ -11,20 +11,20 @@ Synopsis
 
 ::
 
-    ebtupdate [<ebt_addr>] [<ebt_size>]
+    bctupdate [<bct_addr>] [<bct_size>]
 
 Description
 -----------
 
-The "ebtupdate" command is used to self-update bootloader on Tegra 2 and Tegra 3
+The "bctupdate" command is used to self-update bootloader on Tegra 2 and Tegra 3
 production devices.
 
-The "ebtupdate" performs encryption of new bootloader, loads existing BCT to
+The "bctupdate" performs encryption of new bootloader, loads existing BCT to
 decrypt, patch and re-encrypt. After BCT and bootloader are written in
 their respective places in the boot device.
 
-ebt
-    address of the plaintext bootloader pre-loaded into RAM.
+bct
+    address of the plaintext BCT pre-loaded into RAM.
 
 size
     size of the pre-loaded bootloader.
@@ -36,10 +36,10 @@ Example
 
 	load mmc 1:1 ${kernel_addr_r} ${bootloader_file};
 	size mmc 1:1 ${bootloader_file};
-	ebtupdate ${kernel_addr_r} ${filesize};
+	bctupdate ${kernel_addr_r} ${filesize};
 
 Configuration
 -------------
 
-The ebtupdate command is only available if CONFIG_CMD_EBTUPDATE=y and
+The bctupdate command is only available if CONFIG_CMD_EBTUPDATE=y and
 only on supported Tegra configurations.
