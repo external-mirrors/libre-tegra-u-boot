@@ -3,7 +3,6 @@
 #ifndef _BCT_H_
 #define _BCT_H_
 
-#define EBT_ALIGNMENT		0x10
 #define EBT_MAX_LENGTH		(1024 * 1024 * 2)	/* 2 MB */
 
 enum tegra_boot_device {

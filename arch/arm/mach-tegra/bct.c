@@ -121,7 +121,7 @@ static int bct_patch(u8 *bct, u8 *ebt, u32 ebt_size)
 
 	bct += UBCT_LENGTH;
 
-	ebt_size = roundup(ebt_size, EBT_ALIGNMENT);
+	ebt_size = roundup(ebt_size, AES_BLOCK_LENGTH);
 
 	ret = sign_data_block(ebt, ebt_size, (u8 *)bct_tbl->bootloader[0].crypto_hash);
 	if (ret)
@@ -650,7 +650,9 @@ int tegra_boot_flash_bct(struct tegra_boot_update_context *ctx,
 		goto err;
 
 	log_debug("Rehashing BCT\n");
-	bct_patch((u8 *)ctx->bct, (u8 *)CONFIG_SYS_LOAD_ADDR, ebt_size);
+	ret = bct_patch((u8 *)ctx->bct, (u8 *)CONFIG_SYS_LOAD_ADDR, ebt_size);
+	if (ret)
+		goto err;
 
 	log_debug("Flashing BCT\n");
 	ret = write_boot_data(ctx, (u8 *)ctx->bct, 0, BCT_LENGTH);
@@ -700,7 +702,11 @@ int tegra_boot_flash_bootloader(struct tegra_boot_update_context *ctx,
 		}
 	}
 
-	ebt_size = roundup(ebt_size, EBT_ALIGNMENT);
+	ebt_size = roundup(ebt_size, AES_BLOCK_LENGTH);
+	
+	//We need to add a extra padding block or it will get stuck
+	memset(ebt_buffer + ebt_size, 0, AES_BLOCK_LENGTH);
+	ebt_size += AES_BLOCK_LENGTH;
 
 	ret = adjust_bct(ctx, &ebt_offset, &ebt_size);
 	if (ret)
@@ -715,10 +721,14 @@ int tegra_boot_flash_bootloader(struct tegra_boot_update_context *ctx,
 	}
 
 	log_debug("Rehashing BCT and encrypting bootloader\n");
-	bct_patch((u8 *)ctx->bct, ebt_buffer, ebt_size);
+	ret = bct_patch((u8 *)ctx->bct, ebt_buffer, ebt_size);
+	if (ret)
+		goto err;
 
 	log_debug("Flashing BCT\n");
 	ret = write_boot_data(ctx, (u8 *)ctx->bct, 0, BCT_LENGTH);
+	if (ret)
+		goto err;
 
 	log_debug("Flashing EBT\n");
 	ret = write_boot_data(ctx, ebt_buffer, ebt_offset, ebt_size);
