@@ -400,6 +400,8 @@ static int adjust_bct(struct tegra_boot_update_context *ctx,
 	log_debug("BCT block: 0x%x page: 0x%x\n",
 		  ctx->block_size, ctx->page_size);
 
+	info->length = *ebt_size;
+
 	/* If BCT has no bootloaders defined, make a entry */
 	if (!ctx->bct->bootloader_used) {
 		log_debug("BCT has 0 bootloaders used, creating entry\n");
@@ -408,16 +410,15 @@ static int adjust_bct(struct tegra_boot_update_context *ctx,
 		memset(info, 0, sizeof(struct nv_bootloader_info));
 
 		info->version = 1;
-		info->length = *ebt_size;
 
 		/*
 		 * MMC is handled later automatically to accommodate
 		 * boot1 and partition
 		 */
 
+		/* Devices with SPI boot device have 1MB set by vendors*/
 		if (ctx->dev == TEGRA_BOOT_DEVICE_SPI)
-			/* NOTE: is this default for SF? */
-			info->start_blk = 32;
+			info->start_blk = DIV_ROUND_UP(1024 * 1024, ctx->block_size); 
 	}
 
 	/*
