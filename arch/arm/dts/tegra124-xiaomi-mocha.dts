@@ -27,6 +27,10 @@
 		reg = <0x80000000 0x80000000>;
 	};
 
+	bsev@60031000 {
+		status = "okay";
+	};
+
 	host1x@50000000 {
 		dsia: dsi@54300000 {
 			status = "okay";
