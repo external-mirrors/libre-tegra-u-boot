@@ -294,6 +294,22 @@
 		*/
 	};
 
+	/* Video Bitstream Engine */
+	bsev@60031000 {
+		compatible = "nvidia,tegra124-bsev";
+		reg = <0x60031000 0x1000>, <0x40008000 0x4000>;
+		reg-names = "bsev", "iram-buffer";
+		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+		interrupt-names = "bsev";
+		clocks = <&tegra_car TEGRA124_CLK_BSEV>,
+			 <&tegra_car TEGRA124_CLK_VDE>;
+		clock-names = "bsev", "vde";
+		resets = <&tegra_car 63>,
+			 <&tegra_car 61>;
+		reset-names = "bsev", "vde";
+		status = "disabled";
+	};
+
 	apbdma: dma@60020000 {
 		compatible = "nvidia,tegra124-apbdma", "nvidia,tegra148-apbdma";
 		reg = <0x60020000 0x1400>;
