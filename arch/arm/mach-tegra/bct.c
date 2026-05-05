@@ -677,6 +677,7 @@ int tegra_boot_flash_bootloader(struct tegra_boot_update_context *ctx,
 {
 	int ret;
 	u32 ebt_offset;
+	u32 ebt_padding;
 	bool encrypted;
 
 	ret = tegra_boot_setup_context(ctx);
@@ -692,7 +693,7 @@ int tegra_boot_flash_bootloader(struct tegra_boot_update_context *ctx,
 	}
 
 	if (!ctx->bct) {
-		log_debug("No valid BCT was found in boot device\n");
+		pr_err("No valid BCT was found in boot device\n");
 
 		ret = read_iram_bct(ctx);
 		if (ret || !ctx->bct) {
@@ -702,11 +703,10 @@ int tegra_boot_flash_bootloader(struct tegra_boot_update_context *ctx,
 		}
 	}
 
-	ebt_size = roundup(ebt_size, AES_BLOCK_LENGTH);
-	
-	//We need to add a extra padding block or it will get stuck
-	memset(ebt_buffer + ebt_size, 0, AES_BLOCK_LENGTH);
-	ebt_size += AES_BLOCK_LENGTH;
+	// We need to align it and add a extra padding block or it will get stuck
+	ebt_padding = roundup(ebt_size, AES_BLOCK_LENGTH) + AES_BLOCK_LENGTH;
+	memset(ebt_buffer + ebt_size, 0, ebt_padding);
+	ebt_size += ebt_padding;
 
 	ret = adjust_bct(ctx, &ebt_offset, &ebt_size);
 	if (ret)
