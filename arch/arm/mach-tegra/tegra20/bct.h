@@ -22,15 +22,24 @@ struct nv_bootloader_info {
 
 struct nvboot_config_table {
 	u32 crypto_hash[NVBOOT_CMAC_AES_HASH_LENGTH];
-	u32 unused0[4];
+	u32 random_aes_blk[4];
 	u32 boot_data_version;
 	u32 block_size_log2;
 	u32 page_size_log2;
 	u32 partition_size;
-	u32 unused1[664];
+	u32 num_param_sets;
+	u32 dev_type[NVBOOT_MAX_PARAM_SETS];
+	u32 dev_params[NVBOOT_MAX_PARAM_SETS * 4];
+	u32 num_sdram_sets;
+	u32 sdram[NVBOOT_MAX_SDRAM_SETS * 128];
+	u32 badblock_table[130];
 	u32 bootloader_used;
 	struct nv_bootloader_info bootloader[NVBOOT_MAX_BOOTLOADERS];
-	u32 unused2[508];
+	u8 customer_data[1184];
+	u32 odm_data;
+	u32 reserved1;
+	u8 enable_fail_back;
+	u8 reserved[3];
 };
 
 struct tegra_boot_info_table {

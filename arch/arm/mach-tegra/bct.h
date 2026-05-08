@@ -35,6 +35,16 @@ struct tegra_boot_update_context {
 #define NVBOOT_SE_RSA_MODULUS_LENGTH		64
 
 /*
+ * Defines the maximum number of device parameters in the BCT.
+ */
+#define NVBOOT_MAX_PARAM_SETS		4
+
+/*
+ * Defines the maximum number of sdram timing descriptions in the BCT.
+ */
+#define NVBOOT_MAX_SDRAM_SETS		4
+
+/*
  * Defines the maximum number of bootloader descriptions in the BCT.
  */
 #define NVBOOT_MAX_BOOTLOADERS			4

@@ -24,19 +24,32 @@ struct nv_bootloader_info {
 };
 
 struct nvboot_config_table {
-	u32 ubct_unused1[196];
+	u32 badblock_table[130];
+	u8 badblock_padding[6];
+	u32 rsa_key_modulus[64];
 	u32 crypto_hash[NVBOOT_CMAC_AES_HASH_LENGTH];
-	u32 ubct_unused2[228];
-
-	u32 sbct_unused1[2];
+	u32 rsa_signature[64];
+	u8 customer_data[648];
+	u32 odm_data;
+	u32 reserved1;
+	
+	// Signed section of BCT
+	u32 random_aes_blk[4];
+	u32 unique_chip_id[4];
 	u32 boot_data_version;
 	u32 block_size_log2;
 	u32 page_size_log2;
 	u32 partition_size;
-	u32 sbct_unused2[1312];
+	u32 num_param_sets;
+	u32 dev_type[NVBOOT_MAX_PARAM_SETS];
+	u32 dev_params[NVBOOT_MAX_PARAM_SETS * 16];
+	u32 num_sdram_sets;
+	u32 sdram[NVBOOT_MAX_SDRAM_SETS * 309];
 	u32 bootloader_used;
 	struct nv_bootloader_info bootloader[NVBOOT_MAX_BOOTLOADERS];
-	u32 sbct_unused3;
+	u8 enable_fail_back;
+	u8 secure_jtag_control;
+	u8 reserved[2];
 };
 
 struct tegra_boot_info_table {

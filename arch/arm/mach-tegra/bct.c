@@ -104,6 +104,16 @@ static bool is_bct_valid(struct nvboot_config_table *bct)
 		log_debug("Page size out of bounds\n");
 		return false;
 	}
+	
+	if (bct->num_param_sets > NVBOOT_MAX_PARAM_SETS) {
+		log_debug("Number of param sets out of bounds\n");
+		return false;
+	}
+	
+	if (bct->num_sdram_sets > NVBOOT_MAX_SDRAM_SETS) {
+		log_debug("Number of sdram sets out of bounds\n");
+		return false;
+	}
 
 	if (bct->bootloader_used > NVBOOT_MAX_BOOTLOADERS) {
 		log_debug("Bootloader used out of bounds\n");
@@ -401,6 +411,11 @@ static int adjust_bct(struct tegra_boot_update_context *ctx,
 		  ctx->block_size, ctx->page_size);
 
 	info->length = *ebt_size;
+	
+	if (!ctx->bct->num_sdram_sets) {
+		pr_err("BCT has no SDRAM timing, aborting\n");
+		return -1;
+	}
 
 	/* If BCT has no bootloaders defined, make a entry */
 	if (!ctx->bct->bootloader_used) {
