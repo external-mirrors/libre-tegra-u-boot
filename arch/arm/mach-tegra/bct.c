@@ -409,8 +409,6 @@ static int adjust_bct(struct tegra_boot_update_context *ctx,
 
 	log_debug("BCT block: 0x%x page: 0x%x\n",
 		  ctx->block_size, ctx->page_size);
-
-	info->length = *ebt_size;
 	
 	if (!ctx->bct->num_sdram_sets) {
 		pr_err("BCT has no SDRAM timing, aborting\n");
@@ -435,6 +433,8 @@ static int adjust_bct(struct tegra_boot_update_context *ctx,
 		if (ctx->dev == TEGRA_BOOT_DEVICE_SPI)
 			info->start_blk = DIV_ROUND_UP(1024 * 1024, ctx->block_size); 
 	}
+	
+	info->length = *ebt_size;
 
 	/*
 	 * Copy the first/two entry into last as last resort backup
@@ -547,6 +547,12 @@ static int tegra_boot_setup_context(struct tegra_boot_update_context *ctx)
 		if (!ctx->mmc) {
 			log_err("Error getting mmc to write\n");
 			return -1;
+		}
+
+		ret = mmc_init(ctx->mmc);
+		if (ret) {
+			log_err("mmc init failed with error: %d\n", ret);
+			return ret;
 		}
 	} else if (ctx->dev == TEGRA_BOOT_DEVICE_SPI) {
 		loff_t len;
@@ -718,8 +724,8 @@ int tegra_boot_flash_bootloader(struct tegra_boot_update_context *ctx,
 		}
 	}
 
-	// We need to align it and add a extra padding block or it will get stuck
-	ebt_padding = roundup(ebt_size, AES_BLOCK_LENGTH) + AES_BLOCK_LENGTH;
+	/* We need to align it and add a extra padding block or it will get stuck */
+	ebt_padding = (roundup(ebt_size, AES_BLOCK_LENGTH) + AES_BLOCK_LENGTH) - ebt_size;
 	memset(ebt_buffer + ebt_size, 0, ebt_padding);
 	ebt_size += ebt_padding;
 
@@ -779,7 +785,7 @@ static int do_ebtupdate(struct cmd_tbl *cmdtp, int flag, int argc,
 	return ret;
 }
 
-U_BOOT_CMD(ebtupdate,	4,	0,	do_ebtupdate,
+U_BOOT_CMD(ebtupdate,	3,	0,	do_ebtupdate,
 	   "updates the bootloader on Tegra devices from a copy in RAM",
 	   "ebtupdate <addr> <size>\n"
 	   ""
@@ -801,7 +807,7 @@ static int do_bctupdate(struct cmd_tbl *cmdtp, int flag, int argc,
 	return ret;
 }
 
-U_BOOT_CMD(bctupdate,	4,	0,	do_bctupdate,
+U_BOOT_CMD(bctupdate,	3,	0,	do_bctupdate,
 	   "updates the BCT on Tegra devices from a copy in RAM",
 	   "bctupdate <addr> <size>\n"
 	   ""
