@@ -30,7 +30,6 @@
 
 #define NV_PA_IRAM_BASE			0x40000000
 
-static const char *spi_backup_file = "spi-flash-backup.bin";
 
 static int convert_to_blocks(struct blk_desc *dev_desc, int len)
 {
@@ -530,6 +529,118 @@ static int adjust_bct(struct tegra_boot_update_context *ctx,
 	return 0;
 }
 
+static int tegra_boot_backup_to_file(struct tegra_boot_update_context *ctx, 
+									 const char* ifname, const char* dev_part,
+									 const char* backup_file,
+									 u32 data_offset, u32 data_size)
+{
+	int ret;
+	loff_t len;
+	
+	ret = fs_set_blk_dev(ifname, dev_part, FS_TYPE_ANY);
+	if (ret) {
+		snprintf(ctx->error, sizeof(ctx->error), "Error opening %s %s for storing backup\n", ifname, dev_part);
+		return ret;
+	}
+	
+	if (fs_exists(backup_file)) 
+		return 0;
+
+	ret = read_boot_data(ctx, data_offset, data_size);
+	if (ret) {
+		snprintf(ctx->error, sizeof(ctx->error), "Read boot dev err %d for %s\n", ret, backup_file);
+		return ret;
+	}
+	
+	/* Again as fs_close was called on fs_exists */
+	ret = fs_set_blk_dev(ifname, dev_part, FS_TYPE_ANY);
+	if (ret) {
+		snprintf(ctx->error, sizeof(ctx->error), "Error opening %s %s for storing backup\n", ifname, dev_part);
+		return ret;
+	}
+	
+	ret = fs_write(backup_file, CONFIG_SYS_LOAD_ADDR,
+				   0, data_size, &len);
+	if (ret < 0) {
+		snprintf(ctx->error, sizeof(ctx->error), "fs write error %d for %s\n", ret, backup_file);
+		return ret;
+	}
+
+	/* One more time as fs_close was called on fs_write */
+	ret = fs_set_blk_dev(ifname, dev_part, FS_TYPE_ANY);
+	if (ret) {
+		snprintf(ctx->error, sizeof(ctx->error), "Error opening %s %s for storing backup\n", ifname, dev_part);
+		return ret;
+	}
+	
+	if (!fs_exists(backup_file)) {
+		snprintf(ctx->error, sizeof(ctx->error), "%s was not created, unsafe to proceed\n", backup_file);
+		return -1;
+	}
+
+	return 0;
+}
+
+static int tegra_boot_backup(struct tegra_boot_update_context *ctx)
+{
+	int ret;
+	const char* ifname;
+	const char* dev_part;
+	struct mmc *bak_mmc = NULL;
+
+	bak_mmc = find_mmc_device(1);
+	if (bak_mmc) {
+		/* Check sdcard slot */
+		ret = mmc_init(bak_mmc);
+		if (ret) {
+			snprintf(ctx->error, sizeof(ctx->error), "sdcard init error: %d\n", ret);
+			return ret;
+		}
+		
+		if (!IS_SD(bak_mmc)) {
+			snprintf(ctx->error, sizeof(ctx->error), "mmc1 is not sdcard: %d\n", ret);
+			return ret;
+		}
+
+		ifname = "mmc";
+		dev_part = "1:1";
+	} else if (ctx->dev == TEGRA_BOOT_DEVICE_SPI) {
+		/* Not supposed to happen as all SPI devices we know have sdcard */
+		snprintf(ctx->error, sizeof(ctx->error), "spi device but no sdcard slot\n");
+		return -1;
+	} else {
+		/* No sdcard present */
+		log_debug("No sdcard present");
+		return 0;
+	}
+
+	if (ctx->dev == TEGRA_BOOT_DEVICE_MMC) {
+		ret = tegra_boot_backup_to_file(ctx, ifname, dev_part, "mmc-boot0.bak", 0, ctx->mmc->capacity_boot);
+		if (ret)
+			goto err;
+
+		ret = tegra_boot_backup_to_file(ctx, ifname, dev_part, "mmc-boot1.bak", ctx->mmc->capacity_boot, ctx->mmc->capacity_boot);
+		if (ret)
+			goto err;
+
+		ret = tegra_boot_backup_to_file(ctx, ifname, dev_part, "mmc-boot-user.bak", ctx->mmc->capacity_boot * 2, 1024 * 1024 * 32);
+		if (ret)
+			goto err;
+	} else if (ctx->dev == TEGRA_BOOT_DEVICE_SPI) {
+		ret = tegra_boot_backup_to_file(ctx, ifname, dev_part, "spi-boot.bak", 0, ctx->spi_flash->size);
+		if (ret)
+			goto err;
+	} else {
+		log_err("Error: boot device not set\n");
+		return -1;
+	}
+
+err:
+	fs_close();
+
+	return ret;
+}
+
 /**
  * Setups the tegra boot update context struct and opens any required device
  */
@@ -555,7 +666,6 @@ static int tegra_boot_setup_context(struct tegra_boot_update_context *ctx)
 			return ret;
 		}
 	} else if (ctx->dev == TEGRA_BOOT_DEVICE_SPI) {
-		loff_t len;
 		struct udevice *new;
 
 		/* Probe spi flash */
@@ -566,49 +676,12 @@ static int tegra_boot_setup_context(struct tegra_boot_update_context *ctx)
 		}
 
 		ctx->spi_flash = dev_get_uclass_priv(new);
-
-		ret = fs_set_blk_dev("mmc", "1:1", FS_TYPE_ANY);
-		if (ret) {
-			log_err("Error opening MMC 1:1 partition for storing backup\n");
-			return ret;
-		}
-
-		/*
-		 * Make a backup of SPI first if a file doesn't exist,
-		 * else just read BCT
-		 */
-		if (!fs_exists(spi_backup_file)) {
-			ret = spi_flash_read(ctx->spi_flash, 0,
-					     ctx->spi_flash->size,
-					     (u8 *)CONFIG_SYS_LOAD_ADDR);
-			if (ret) {
-				log_err("Error reading SF for backup\n");
-				fs_close();
-				return ret;
-			}
-
-			ret = fs_write(spi_backup_file, CONFIG_SYS_LOAD_ADDR,
-				       0, ctx->spi_flash->size, &len);
-			if (ret || len != ctx->spi_flash->size) {
-				log_err("Error writing SF backup: %d\n", (int)len);
-				fs_close();
-				return ret;
-			}
-		}
-
-		if (!fs_exists(spi_backup_file)) {
-			log_err("SF Backup failed to be created, unsafe to proceed\n");
-			fs_close();
-			return -1;
-		}
-
-		fs_close();
 	} else {
 		log_err("Error: boot device not set\n");
 		return -1;
 	}
 
-	return 0;
+	return tegra_boot_backup(ctx);
 }
 
 int tegra_boot_flash_bct(struct tegra_boot_update_context *ctx,
