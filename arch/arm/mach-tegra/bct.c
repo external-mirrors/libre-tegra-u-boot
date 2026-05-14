@@ -5,6 +5,8 @@
  * Copyright (c) 2026, Ion Agorria <ion@agorria.com>
  */
 
+#define LOG_DEBUG 1
+
 #include <dm.h>
 #include <blk.h>
 #include <command.h>
