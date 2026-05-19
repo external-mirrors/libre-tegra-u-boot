@@ -139,18 +139,18 @@
 					display-timings {
 						timing@0 {
 							/* 1920x1200@60Hz */
-							clock-frequency = <154000000>;
+							clock-frequency = <157200000>;
 
 							hactive = <1920>;
-							hfront-porch = <48>;
-							hback-porch = <80>;
-							hsync-len = <32>;
+							hfront-porch = <154>;
+							hback-porch = <32>;
+							hsync-len = <16>;
 							hsync-active = <1>;
 
 							vactive = <1200>;
-							vfront-porch = <3>;
-							vback-porch = <26>;
-							vsync-len = <6>;
+							vfront-porch = <17>;
+							vback-porch = <16>;
+							vsync-len = <2>;
 							vsync-active = <1>;
 						};
 					};
