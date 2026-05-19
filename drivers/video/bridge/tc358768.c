@@ -488,6 +488,9 @@ static int tc358768_attach(struct udevice *dev)
 
 	tc358768_setup_pll(dev);
 
+	/* Allow the PLL to settle */
+	mdelay(20);
+
 	dsiclk = priv->dsiclk;
 	hsbyteclk = dsiclk / 4;
 
