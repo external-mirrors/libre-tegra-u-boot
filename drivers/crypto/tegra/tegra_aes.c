@@ -578,6 +578,8 @@ static const struct udevice_id tegra_aes_ids[] = {
 	{ .compatible = "nvidia,tegra20-bsev" },
 	{ .compatible = "nvidia,tegra30-bsea" },
 	{ .compatible = "nvidia,tegra30-bsev" },
+	{ .compatible = "nvidia,tegra124-bsea" },
+	{ .compatible = "nvidia,tegra124-bsev" },
 	{ }
 };
 
