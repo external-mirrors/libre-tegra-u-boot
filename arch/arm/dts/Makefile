@@ -117,6 +117,7 @@ dtb-$(CONFIG_ARCH_TEGRA) += \
 	tegra114-microsoft-surface-2-0b.dtb \
 	tegra114-microsoft-surface-2-13.dtb \
 	tegra114-nvidia-tegratab.dtb \
+	tegra148-nvidia-s8515.dtb \
 	tegra124-apalis.dtb \
 	tegra124-jetson-tk1.dtb \
 	tegra124-nyan-big.dtb \

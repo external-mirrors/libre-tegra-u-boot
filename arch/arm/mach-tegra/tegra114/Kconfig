@@ -20,6 +20,10 @@ config TARGET_TRANSFORMER_T114
 	bool "ASUS Tegra114 Transformer board"
 	select BOARD_LATE_INIT
 
+config TARGET_S8515
+	bool "NVIDIA Tegra148 s8515 board"
+	select BOARD_LATE_INIT
+
 endchoice
 
 config SYS_SOC
@@ -29,5 +33,6 @@ source "board/nvidia/dalmore/Kconfig"
 source "board/microsoft/surface-2/Kconfig"
 source "board/nvidia/tegratab/Kconfig"
 source "board/asus/transformer-t114/Kconfig"
+source "board/nvidia/s8515/Kconfig"
 
 endif

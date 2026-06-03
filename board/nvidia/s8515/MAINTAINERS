@@ -1,0 +1,6 @@
+TEGRATAB BOARD
+M:	Svyatoslav Ryhel <clamor95@gmail.com>
+S:	Maintained
+F:	arch/arm/dts/tegra148-nvidia-s8515.dts
+F:	board/nvidia/s8515/
+F:	configs/s8515_defconfig

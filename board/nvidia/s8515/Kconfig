@@ -1,0 +1,17 @@
+if TARGET_S8515
+
+config SYS_BOARD
+	default "s8515"
+
+config SYS_VENDOR
+	default "nvidia"
+
+config TEGRA_BOARD_STRING
+	string "Default Tegra board name"
+	default "NVIDIA s8515"
+
+config TEGRA_PRAM_SIZE
+	depends on TEGRA_PRAM
+	default 0x21c00
+
+endif
