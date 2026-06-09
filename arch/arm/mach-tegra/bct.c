@@ -236,8 +236,9 @@ static int access_boot_data_spi(struct tegra_boot_update_context *ctx,
 				     (u8 *)CONFIG_SYS_LOAD_ADDR);
 		if (ret) {
 			log_err("Failed to read data at SF (%d)\n", ret);
-			return ret;
 		}
+
+		return ret;
 	}
 
 	/* Writing */
