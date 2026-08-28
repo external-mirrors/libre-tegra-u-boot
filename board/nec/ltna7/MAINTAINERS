@@ -1,0 +1,6 @@
+LTNA7 BOARD
+M:	Svyatoslav Ryhel <clamor95@gmail.com>
+S:	Maintained
+F:	board/nec/ltna7/
+F:	configs/ltna7_defconfig
+F:	doc/board/nec/ltna7.rst

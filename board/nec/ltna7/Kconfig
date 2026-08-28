@@ -1,0 +1,13 @@
+if TARGET_LTNA7
+
+config SYS_BOARD
+	default "ltna7"
+
+config SYS_VENDOR
+	default "nec"
+
+config TEGRA_BOARD_STRING
+	string "Default Tegra board name"
+	default "NEC LifeTouch Note"
+
+endif

@@ -44,6 +44,10 @@ config TARGET_PICASSO
 	bool "Acer Tegra20 Picasso board"
 	select BOARD_LATE_INIT
 
+config TARGET_LTNA7
+	bool "NEC Tegra20 LTNA7 board"
+	select BOARD_LATE_INIT
+
 config TARGET_PLUTUX
 	bool "Avionic Design Plutux board"
 	select BOARD_LATE_INIT
@@ -103,5 +107,6 @@ source "board/asus/transformer-t20/Kconfig"
 source "board/compulab/trimslice/Kconfig"
 source "board/nvidia/ventana/Kconfig"
 source "board/toradex/colibri_t20/Kconfig"
+source "board/nec/ltna7/Kconfig"
 
 endif
