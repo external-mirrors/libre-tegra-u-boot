@@ -64,6 +64,8 @@ config TEGRA_COMMON
 	select MMC
 	select MTD
 	select OF_CONTROL
+	select OF_SYSTEM_SETUP
+	select FDT_SIMPLEFB if VIDEO
 	select SPI
 	select SYSRESET
 	select SYSRESET_TEGRA

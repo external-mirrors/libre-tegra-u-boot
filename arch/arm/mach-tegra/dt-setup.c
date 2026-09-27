@@ -9,6 +9,10 @@
 #include <linux/if_ether.h>
 #include <asm/arch-tegra/cboot.h>
 #include <asm/arch-tegra/gpu.h>
+#if defined(CONFIG_FDT_SIMPLEFB)
+#include <fdt_support.h>
+#include <fdt_simplefb.h>
+#endif
 
 /*
  * This function is called right before the kernel is booted. "blob" is the
@@ -24,13 +28,22 @@ int ft_system_setup(void *blob, struct bd_info *bd)
 		"nvidia,gm20b",
 #endif
 	};
-	int i, ret;
+	int i, ret, node;
 
 	/* Enable GPU node if GPU setup has been performed */
 	for (i = 0; i < ARRAY_SIZE(gpu_compats); i++) {
 		ret = tegra_gpu_enable_node(blob, gpu_compats[i]);
 		if (ret)
 			return ret;
+	}
+	
+	/* Pass simplefb parameters */
+	if (CONFIG_IS_ENABLED(FDT_SIMPLEFB)) {
+		node = fdt_node_offset_by_compatible(blob, -1, "simple-framebuffer");
+		if (node < 0)
+			fdt_simplefb_add_node(blob);
+
+		fdt_simplefb_enable_and_mem_rsv(blob);
 	}
 
 	return 0;
