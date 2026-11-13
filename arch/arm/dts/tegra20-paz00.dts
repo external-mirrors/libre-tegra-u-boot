@@ -463,6 +463,7 @@
 
 	usb@c5000000 {
 		status = "okay";
+		dr_mode = "peripheral";
 	};
 
 	usb-phy@c5000000 {
